@@ -1,9 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import os
+import sys
+from datetime import datetime
 
-def scrape_letterboxd_diary():
-    base_url = "https://letterboxd.com/pedersandvoll/films/diary/for/2024/"
+def scrape_letterboxd_diary(username=None):
+    if not username:
+        username = os.getenv('LETTERBOXD_USERNAME')
+        if not username:
+            print("Error: Please provide a Letterboxd username either as an argument or set LETTERBOXD_USERNAME environment variable")
+            sys.exit(1)
+            
+    base_url = f"https://letterboxd.com/{username}/films/diary/for/{datetime.now().year}/"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
@@ -63,4 +72,5 @@ def scrape_letterboxd_diary():
             writer.writerow([title, year, rating, watched_date])
 
 if __name__ == "__main__":
-    scrape_letterboxd_diary()
+    username = sys.argv[1] if len(sys.argv) > 1 else None
+    scrape_letterboxd_diary(username)
