@@ -47,11 +47,20 @@ def scrape_letterboxd_diary():
         
         page += 1
     
-    # Write to CSV
-    with open('letterboxdExport.csv', 'w', newline='', encoding='utf-8') as file:
+    # Write to CSV in Letterboxd import format
+    with open('letterboxd-import.csv', 'w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
-        writer.writerow(['MovieTitle', 'MovieReleaseDate', 'UserRating'])
-        writer.writerows(movies)
+        writer.writerow(['Title', 'Year', 'Rating', 'WatchedDate'])
+        
+        for movie in movies:
+            title = movie[0]
+            year = movie[1]
+            # Convert rating from "X/5" format to just the number
+            rating = movie[2].split('/')[0] if movie[2] else ''
+            # Get today's date as watched date since we don't have the actual watch date
+            watched_date = "2024-01-01"  # You might want to adjust this
+            
+            writer.writerow([title, year, rating, watched_date])
 
 if __name__ == "__main__":
     scrape_letterboxd_diary()
