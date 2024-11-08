@@ -3,19 +3,26 @@ from bs4 import BeautifulSoup
 import csv
 
 def scrape_letterboxd_diary():
-    url = "https://letterboxd.com/pedersandvoll/films/diary/for/2024/"
+    base_url = "https://letterboxd.com/pedersandvoll/films/diary/for/2024/"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
     
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    
-    # Find all diary entries
-    diary_entries = soup.find_all('tr', class_='diary-entry-row')
-    
     movies = []
-    for entry in diary_entries:
+    page = 1
+    while True:
+        url = f"{base_url}page/{page}/" if page > 1 else base_url
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Find all diary entries
+        diary_entries = soup.find_all('tr', class_='diary-entry-row')
+        
+        # If no entries found, we've reached the end
+        if not diary_entries:
+            break
+    
+        for entry in diary_entries:
         # Get movie title
         title_element = entry.find('h3', class_='headline-3')
         if title_element:
@@ -36,7 +43,9 @@ def scrape_letterboxd_diary():
                     rating = class_name.replace('rated-', '') + '/5'
                     break
         
-        movies.append([title, release_date, rating])
+            movies.append([title, release_date, rating])
+        
+        page += 1
     
     # Write to CSV
     with open('letterboxdExport.csv', 'w', newline='', encoding='utf-8') as file:
