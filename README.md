@@ -2,7 +2,7 @@
 
 ## Letterboxd Diary Scraper
 
-A Python script to scrape your Letterboxd diary entries for the current year and export them in a format compatible with Letterboxd's import feature.
+A Python script to scrape your Letterboxd diary entries for the current year and export them in a format compatible with Letterboxd's import feature, created entirely with aider.
 
 ### Requirements
 
